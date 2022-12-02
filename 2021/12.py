@@ -55,28 +55,28 @@ def part2():
         visited["start"] = True
         total = 0
         for k in cavePaths["start"]:
-            total+=_getPaths(cavePaths,k,visited)
+            total +=_getPaths(cavePaths,k,visited)
 
         return total
                 
-    def _getPaths(cavePaths,current,visited):
+    def _getPaths(cavePaths,current, visited):
         visited = visited.copy()
         if current == "end":
             return 1
         else:
             if current == str.lower(current):
-                if current not in visited.keys():
+                if current not in visited:
                     visited[current] = False
                 else:
                     visited[current] = True
 
             total = 0
             for k in cavePaths[current]:
-                if k not in visited.keys() or visited[k] == False:
+                if k not in visited or visited[k] == False:
                     total += _getPaths(cavePaths,k,visited)
 
             return total
 
     return getPaths(cavePaths)
 
-print(part2())
+print(part1())

@@ -95,4 +95,4 @@ def part2():
 
     return len(marcs)
 
-print(part2())
+print(part1())

@@ -36,6 +36,4 @@ def part2():
             total += sumF(abs(crabPos-pos),sumMem)
         possible.add(total)
 
-    print(min(possible))
-
-print(part2())
+print(part1())

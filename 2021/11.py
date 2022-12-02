@@ -86,4 +86,4 @@ def part2():
         else:
             iteration+=1
 
-print(part2())
+print(part1())

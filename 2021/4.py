@@ -135,4 +135,4 @@ class Solution:
         return unMarkSum*finalNumber    
 
 sol = Solution()
-print(sol.part2())
+print(sol.part1())
