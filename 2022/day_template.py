@@ -8,7 +8,7 @@ from Inputs.ReadFile import *
 class Problem:
 	def __init__(self, inp, part):
 		self.inp = inp
-		
+
 		if part == '1':
 			print(self.part1())
 		else:
@@ -27,3 +27,6 @@ if __name__ == "__main__":
 
 with open(f"{DAY}.py", "w") as f:
 	f.write(template)
+
+with open(f"Inputs/input{DAY}.txt", "w") as f:
+	f.write("")
