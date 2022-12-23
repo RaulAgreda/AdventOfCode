@@ -24,7 +24,7 @@ class Problem:
 		return max(self.total_elfs_calories())
 
 	def part2(self):
-		total_calories = self.total_elfs_calories().copy()
+		total_calories = self.total_elfs_calories()
 		total_calories.sort()
 		return sum(total_calories[-3:])
 
