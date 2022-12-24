@@ -31,7 +31,6 @@ class Problem:
 		row_length = len(self.inp)
 		col_length = len(self.inp[0])
 		M = self.inp
-		# check each row view
 		for i in range(row_length):
 			for j in range(col_length):
 				self.checkSides(i, j, M, self.visible)
@@ -41,7 +40,6 @@ class Problem:
 		total = 1
 		tree_height = M[start_i][start_j]
 		directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
-		# print((start_i, start_j))
 		for direction in directions:
 			current_height = '0'
 			trees_seen = 0
@@ -54,8 +52,6 @@ class Problem:
 				i += direction[0]
 				j += direction[1]
 			total *= trees_seen
-			# print("\t", direction, trees_seen)
-		# print(total)
 		return total
 
 	def part2(self):

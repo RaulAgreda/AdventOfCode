@@ -12,7 +12,6 @@ class Dir:
 		self.parent = parent
 		self.name = name
 		self.size = 0
-		# self.files = []
 		self.dirs = {}
 
 class Problem:
