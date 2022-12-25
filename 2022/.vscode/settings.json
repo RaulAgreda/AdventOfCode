@@ -1,0 +1,10 @@
+{
+	"files.associations": {
+		"*.c": "c",
+		"functional": "cpp",
+		"limits": "cpp",
+		"numeric": "cpp",
+		"tuple": "cpp",
+		"*.tcc": "cpp"
+	}
+}

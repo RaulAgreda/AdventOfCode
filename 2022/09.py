@@ -32,6 +32,13 @@ class Problem:
 				visited.add(tuple(t_pos))
 		return len(visited)
 
+	def sign(self, x):
+		if x < 0:
+			return -1
+		if x > 0:
+			return 1
+		return 0
+
 	def part2(self):
 		rope = ()
 		for i in range(10):
@@ -44,10 +51,12 @@ class Problem:
 			for i in range(repeat):
 				rope[0][0] += direction[0]
 				rope[0][1] += direction[1]
-				for i in range(1, len(rope)):
-					if (abs(rope[i][0] - rope[i-1][0]) > 1 or abs(rope[i][1] - rope[i-1][1]) > 1):
-						rope[i][0] += rope[i-1][0] - direction[0]
-						rope[i][1] += rope[i-1][1] - direction[1]
+				for i in range(len(rope)-1):
+					diff_x = rope[i][0] - rope[i+1][0]
+					diff_y = rope[i][1] - rope[i+1][1]
+					if (abs(diff_x) > 1 or abs(diff_y) > 1):
+						rope[i+1][0] += self.sign(diff_x)
+						rope[i+1][1] += self.sign(diff_y)
 				visited.add(tuple(rope[-1]))
 				print(rope)
 		return len(visited)

@@ -1,4 +1,5 @@
 import sys
+import os
 
 DAY = sys.argv[1]
 
@@ -24,9 +25,14 @@ if __name__ == "__main__":
 	inp = read_file("Inputs/input{DAY}.txt").split('\\n')
 	Problem(inp, sys.argv[1])
 """
+if not os.path.exists(f"{DAY}.py"):
+	with open(f"{DAY}.py", "w") as f:
+		f.write(template)
+else:
+	print("Python file already exists")
 
-with open(f"{DAY}.py", "w") as f:
-	f.write(template)
-
-with open(f"Inputs/input{DAY}.txt", "w") as f:
-	f.write("")
+if not os.path.exists(f"Inputs/input{DAY}.txt"):
+	with open(f"Inputs/input{DAY}.txt", "w") as f:
+		f.write("")
+else:
+	print("Input file already exists")
