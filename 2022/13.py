@@ -62,10 +62,6 @@ class Problem:
 
 	def compare(self, first, second):
 		"""Return 1 if less than, 0 if equal, -1 if greater than"""
-		# print("Comparing")
-		# print(first)
-		# print("and")
-		# print(second)
 		if isinstance(first, int) and isinstance(second, int):
 			if first < second:
 				return 1
