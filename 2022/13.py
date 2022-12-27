@@ -40,57 +40,93 @@ class Problem:
 		else:
 			print(self.part2())
 
-	def get_package(self, str, i:list[int], current_deep, deep:list[int]):
+	def get_package(self, str, i:list[int]):
 		content = []
-		current_deep += 1
 		while i[0] < len(str):
 			if str[i[0]] == ']':
 				i[0] += 1
-				if deep[0] < current_deep:
-					deep[0] = current_deep
 				return content
 			if str[i[0]] == '[':
 				i[0] += 1
-				content.append(self.get_package(str, i, current_deep, deep))
+				content.append(self.get_package(str, i))
 				continue
 			elif str[i[0]] != ',':
-				content.append(int(str[i[0]]))
-			i[0] += 1	
+				number = ""
+				while (str[i[0]] != ',' and str[i[0]] != ']'):
+					number += str[i[0]]
+					i[0] += 1
+				content.append(int(number))
+			else:
+				i[0] += 1	
 		return -1
+
+	def compare(self, first, second):
+		"""Return 1 if less than, 0 if equal, -1 if greater than"""
+		# print("Comparing")
+		# print(first)
+		# print("and")
+		# print(second)
+		if isinstance(first, int) and isinstance(second, int):
+			if first < second:
+				return 1
+			elif first == second:
+				return 0
+			else:
+				return -1
+		if (type(first) != type(second)):
+			if isinstance(first, int):
+				first = [first]
+			else:
+				second = [second]
+			return self.compare(first, second)
+		i = 0
+		while i < len(first) and i < len(second):
+			comparision = self.compare(first[i], second[i])
+			if comparision != 0:
+				return comparision
+			i += 1
+		if len(first) < len(second):
+			return 1
+		elif len(first) == len(second):
+			return 0
+		else:
+			return -1
 
 	def part1(self):
 		indexes = []
 		for i in range(len(self.inp)):
 			first_str, second_str = self.inp[i].split()
 			index = [1]
-			deep = [0]
-			first = self.get_package(first_str, index, 0, deep)
-			first_deep = deep[0]
-			print(first)
-			print("first", first_deep)
+			first = self.get_package(first_str, index)
 			index = [1]
-			deep = [0]
-			second = self.get_package(second_str, index, 0, deep)
-			second_deep = deep[0]
-			print(second)
-			print("second", second_deep)
-			while first_deep != second_deep:
-				conversion = []
-				if first_deep < second_deep:
-					conversion.append(first)
-					first_deep += 1
-					first = conversion
-				else:
-					conversion.append(second)
-					second_deep += 1
-					second = conversion
-			if first < second:
-				print(i)
-				indexes.append(i)
-		return indexes
+			second = self.get_package(second_str, index)
+			if self.compare(first, second) == 1:
+				indexes.append(i+1)
+		print(indexes)
+		return sum(indexes)
 
 	def part2(self):
-		pass
+		packages = []
+		for i in range(len(self.inp)):
+			first_str, second_str = self.inp[i].split()
+			index = [1]
+			first = self.get_package(first_str, index)
+			index = [1]
+			second = self.get_package(second_str, index)
+			packages.append(first)
+			packages.append(second)
+		divider1 = [[2]]
+		divider2 = [[6]]
+		packages.append(divider1)
+		packages.append(divider2)
+		for i in range(len(packages)-1):
+			for j in range(i+1, len(packages)):
+				if self.compare(packages[i], packages[j]) == -1:
+					packages[i], packages[j] = packages[j], packages[i]
+		index1 = packages.index(divider1) + 1
+		index2 = packages.index(divider2) + 1
+		print(index1, index2)
+		return index1 * index2
 
 if __name__ == "__main__":
 	inp = read_file("Inputs/input13.txt").split('\n\n')
