@@ -8,7 +8,6 @@ class Problem:
 		self.beacons = set()
 		self.get_data()
 		self.manhatan_dists = {sensor: self.manhatan_dist(sensor, self.sensors[sensor]) for sensor in self.sensors}
-		print(self.manhatan_dist)
 		if part == '1':
 			print(self.part1())
 		else:
@@ -46,22 +45,54 @@ class Problem:
 					x += 1
 		return len(illegal_positions)
 
+	def get_confine_lines(self, sensor):
+		# y = mx + b
+		lines = []
+		# Top rising
+		lines.append(( 1, sensor[1] - self.manhatan_dists[sensor] - 1 - sensor[0]))
+		# Top descending
+		lines.append((-1, sensor[1] - self.manhatan_dists[sensor] - 1 + sensor[0]))
+		# Bottom rising
+		lines.append(( 1, sensor[1] + self.manhatan_dists[sensor] + 1 - sensor[0]))
+		# Bottom descending
+		lines.append((-1, sensor[1] + self.manhatan_dists[sensor] + 1 + sensor[0]))
+		return lines
+
 	def part2(self):
-		Limit = 20
+		Limit = 4000000
 		x = 0
-		while x <= Limit:
-			y = 0
-			while y <= Limit:
+		lines = {}
+		ascending_lines = []
+		descending_lines = []
+		for sensor in self.sensors:
+			sensor_lines = self.get_confine_lines(sensor)
+			for line in sensor_lines:
+				"""The point is at the intersection of 4 lines, so two of them must colide, discarding those that only colide a single time"""
+				if line not in lines:
+					lines[line] = 1
+				else:
+					lines[line] += 1
+		for line in lines:
+			if lines[line] > 1:
+				if line[0] > 0:
+					ascending_lines.append(line[1])
+				else:
+					descending_lines.append(line[1])
+		points = []
+		for ascending_b in ascending_lines:
+			for descending_b in descending_lines:
+				x = (descending_b - ascending_b) // 2
+				y = x + ascending_b
+				points.append((x, y))
+		for point in points:
+			if 0 <= point[0] <= Limit and 0 <= point[1] <= Limit:
 				a = True
 				for sensor in self.manhatan_dists:
-					if self.manhatan_dists[sensor] >= self.manhatan_dist((x, y), sensor):
+					if self.manhatan_dists[sensor] >= self.manhatan_dist(point, sensor):
 						a = False
 						break
 				if a:
-					return x * 4000000 + y
-				y += 1
-			x += 1
-						
+					return point[0] * 4000000 + point[1]
 
 
 
