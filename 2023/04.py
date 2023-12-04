@@ -45,18 +45,16 @@ class Problem:
 		scratchCards = {}
 		games = self.parseInput()
 		for g in range(len(games)):
-			scratchCards[g+1] = 0
+			scratchCards[g+1] = 1
 		for g in range(len(games)):
 			# currentGame: g+1
-			scratchCards[g+1] += 1
 			nWin = 0
 			for card in games[g]["yours"]:
 				if card in games[g]["win"]:
 					nWin += 1
 			#nextGame: g+2
-			for copy in range(scratchCards[g+1]):
-				for i in range(nWin):
-					scratchCards[g+2+i] += 1
+			for i in range(nWin):
+				scratchCards[g+2+i] += scratchCards[g+1]
 		total = 0
 		for k in scratchCards:
 			total += scratchCards[k]
