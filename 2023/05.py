@@ -18,21 +18,9 @@ class Problem:
 			print(self.part1())
 		else:
 			print(self.part2())
-	
-	def makeMaps(self):
-		maps = []
-		for conversionPack in self.maps_arrays:
-			current_map = {}
-			for conversion in conversionPack:
-				dest, source, step = conversion
-				for i in range(step):
-					current_map[source + i] = dest + i
-			maps.append(current_map)
-		return maps
 
 	def part1(self):
-		# maps = self.makeMaps()
-		locations = []
+		minim = None
 		for seed in self.seeds:
 			nextVal = seed
 			for conversionPack in self.maps_arrays:
@@ -43,22 +31,25 @@ class Problem:
 						diff = nextVal - source
 						nextVal = dest + diff
 						break
-			locations.append(nextVal)
-		return min(locations)
+			if minim is None or nextVal < minim:
+				minim = nextVal
+		return minim
 
 	def part2(self):
 		locations = {}
 		print("starting")
 		# To optimize it, if we get a greater number in some of the steps, skip it by breaking the current range loop
 		# Skip all numbers that doesn't reach the minimum value
+		minim = None
 		for s in range(0, len(self.seeds), 2):
 			start = self.seeds[s]
 			end = start + self.seeds[s+1]
-			while start < end:
+			i = 0
+			while start < start+1:
 				seed = start
 				start += 1
-				if seed in locations:
-					continue
+				if minim and start > minim:
+					break
 				nextVal = seed
 				for conversionPack in self.maps_arrays:
 					for conversion in conversionPack:
@@ -68,9 +59,10 @@ class Problem:
 							diff = nextVal - source
 							nextVal = dest + diff
 							break
-				locations[seed] = nextVal
+				if minim is None or nextVal < minim:
+					minim = nextVal
 				# print(nextVal)
-		return min(locations.values())
+		return minim
 
 if __name__ == "__main__":
 	if (len(sys.argv) != 2):
