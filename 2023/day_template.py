@@ -32,7 +32,7 @@ class Problem:
 		else:
 			inp, solutions = read_test("TestInputs/input{DAY}.txt")
 
-		self.inp = inp.split("\\n\\n")
+		self.inp = inp.split("\\n")
 		
 		result = self.part1() if part == '1' else self.part2()
 		if not test:

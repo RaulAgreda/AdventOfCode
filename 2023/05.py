@@ -13,7 +13,6 @@ class Problem:
 			inp = read_file("Inputs/input05.txt")
 		else:
 			inp, solutions = read_test("TestInputs/input05.txt")
-			
 		self.inp = inp.split("\n\n")
 		
 		self.seeds = [int(x) for x in self.inp[0].split()[1:]]
