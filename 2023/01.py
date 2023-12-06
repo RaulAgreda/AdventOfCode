@@ -1,5 +1,5 @@
 import sys
-from Inputs.ReadFile import *
+from utils.read_input import *
 
 class Problem:
 	def __init__(self, inp:str, part):
