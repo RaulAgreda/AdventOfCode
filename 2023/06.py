@@ -50,16 +50,25 @@ class Problem:
 	
 	def part2(self):
 		times, distances = self.parseInput(ignoreSpaces=True)
-		ways = 0
 		T = times[0]
 		D = distances[0]
 		t = 1
+		min_t = 1
+		max_t = T
 		while t < T:
 			x = t * (T - t)
 			if x > D:
-				ways += 1
+				min_t = t
+				break
 			t+=1
-		return ways
+		t = T
+		while t > 0:
+			x = t * (T - t)
+			if x > D:
+				max_t = t
+				break
+			t -= 1
+		return max_t - min_t + 1
 		
 
 if __name__ == "__main__":
