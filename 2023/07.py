@@ -14,8 +14,9 @@ class Hand:
 	
 	CARD_STRENGHT = {'A': 0, 'K': 1, 'Q': 2, 'J': 3, 'T': 4, '9': 5, '8': 6, '7': 7, '6': 8, '5': 9, '4': 10, '3': 11, '2': 12}
 
-	def __init__(self, cards:str, usingJokers=False) -> None:
+	def __init__(self, cards:str, bid:int, usingJokers=False) -> None:
 		self.cards = cards
+		self.bid = bid
 		self.usingJokers = usingJokers
 		if usingJokers:
 			self.type = self.__getTypeWithJokers()
@@ -36,7 +37,6 @@ class Hand:
 				card2_val = 13
 		return card2_val - card1_val
 
-
 	def __gt__(self, other) -> bool:
 		if self.type != other.type:
 			return self.type > other.type
@@ -46,10 +46,8 @@ class Hand:
 				return result > 0
 		print("I shouldn't be executing xD")
 		
-
 	def __lt__(self, other) -> bool:
 		return not self.__gt__(other)
-
 
 	def __getType(self):
 		cards = {}
@@ -142,26 +140,21 @@ class Problem:
 	
 	def parseInput(self, usingJokers=False):
 		hands = []
-		bids = []
 		for line in self.inp:
 			hand, bid = line.split()
-			hand = Hand(hand, usingJokers)
-			bid = int(bid)
+			hand = Hand(hand, int(bid), usingJokers)
 			hands.append(hand)
-			bids.append(bid)
-		return hands, bids
+		return hands
 
 
 	def part1(self, usingJokers=False):
-		hands, bids = self.parseInput(usingJokers)
-		for i in range(len(hands)-1):
-			for j in range(i+1, len(hands)):
-				if hands[i] > hands[j]:
-					hands[i], hands[j] = hands[j], hands[i]
-					bids[i], bids[j] = bids[j], bids[i]
+		hands = self.parseInput(usingJokers)
+		hands.sort()
 		total = 0
-		for i in range(len(hands)):
-			total += bids[i] * (i+1)
+		i = 1
+		for hand in hands:
+			total += hand.bid * i
+			i += 1
 		return total
 
 	def part2(self):
