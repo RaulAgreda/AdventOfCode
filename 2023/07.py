@@ -14,10 +14,10 @@ class Hand:
 	
 	CARD_STRENGHT = {'A': 0, 'K': 1, 'Q': 2, 'J': 3, 'T': 4, '9': 5, '8': 6, '7': 7, '6': 8, '5': 9, '4': 10, '3': 11, '2': 12}
 
-	def __init__(self, cards:str, withJokers=False) -> None:
+	def __init__(self, cards:str, usingJokers=False) -> None:
 		self.cards = cards
-		self.jokers = withJokers
-		if withJokers:
+		self.usingJokers = usingJokers
+		if usingJokers:
 			self.type = self.__getTypeWithJokers()
 		else:
 			self.type = self.__getType()
@@ -29,7 +29,7 @@ class Hand:
 		"""
 		card1_val = Hand.CARD_STRENGHT[card1]
 		card2_val = Hand.CARD_STRENGHT[card2]
-		if self.jokers:
+		if self.usingJokers:
 			if card1 == 'J':
 				card1_val = 13
 			if card2 == 'J':
@@ -76,8 +76,41 @@ class Hand:
 		else:
 			return Hand.Types.HIGH_CARD
 		
-	def __getTypeWithJokers():
-		return "a"
+	def __getTypeWithJokers(self):
+		if 'J' not in self.cards:
+			return self.__getType()
+		cards = {}
+		for card in self.cards:
+			cards[card] = 0
+		for card in self.cards:
+			cards[card] += 1
+		jokers = cards['J']
+		potential_type = self.__getType()
+		if (jokers >= 4):
+			return Hand.Types.FIVE_OF_A_KIND
+		if (jokers == 3):
+			if potential_type == Hand.Types.FULL_HOUSE:
+				return Hand.Types.FIVE_OF_A_KIND
+			else:
+				return Hand.Types.FOUR_OF_A_KIND
+		elif (jokers == 2):
+			if potential_type == Hand.Types.FULL_HOUSE:
+				return Hand.Types.FIVE_OF_A_KIND
+			elif potential_type == Hand.Types.TWO_PAIR:
+				return Hand.Types.FOUR_OF_A_KIND
+			else:
+				return Hand.Types.THREE_OF_A_KIND
+		else:
+			if potential_type == Hand.Types.FOUR_OF_A_KIND:
+				return Hand.Types.FIVE_OF_A_KIND
+			elif potential_type == Hand.Types.THREE_OF_A_KIND:
+				return Hand.Types.FOUR_OF_A_KIND
+			elif potential_type == Hand.Types.TWO_PAIR:
+				return Hand.Types.FULL_HOUSE
+			elif potential_type == Hand.Types.ONE_PAIR:
+				return Hand.Types.THREE_OF_A_KIND
+			else:
+				return Hand.Types.ONE_PAIR
 
 class Problem:
 
@@ -107,20 +140,20 @@ class Problem:
 			print(f"{Colors.YELLOW}Expected: {Colors.RESET}{solution}")
 			print(f"{Colors.YELLOW}Got: {Colors.RESET}{result}")
 	
-	def parseInput(self):
+	def parseInput(self, usingJokers=False):
 		hands = []
 		bids = []
 		for line in self.inp:
 			hand, bid = line.split()
-			hand = Hand(hand)
+			hand = Hand(hand, usingJokers)
 			bid = int(bid)
 			hands.append(hand)
 			bids.append(bid)
 		return hands, bids
 
 
-	def part1(self):
-		hands, bids = self.parseInput()
+	def part1(self, usingJokers=False):
+		hands, bids = self.parseInput(usingJokers)
 		for i in range(len(hands)-1):
 			for j in range(i+1, len(hands)):
 				if hands[i] > hands[j]:
@@ -132,7 +165,7 @@ class Problem:
 		return total
 
 	def part2(self):
-		pass
+		return self.part1(usingJokers=True)
 
 if __name__ == "__main__":
 	if (len(sys.argv) not in (2, 3)):
