@@ -11,18 +11,30 @@ class Hand:
 		FULL_HOUSE = 4,
 		FOUR_OF_A_KIND = 5,
 		FIVE_OF_A_KIND = 6,
+	
+	CARD_STRENGHT = {'A': 0, 'K': 1, 'Q': 2, 'J': 3, 'T': 4, '9': 5, '8': 6, '7': 7, '6': 8, '5': 9, '4': 10, '3': 11, '2': 12}
 
-	def __init__(self, cards:str) -> None:
+	def __init__(self, cards:str, withJokers=False) -> None:
 		self.cards = cards
-		self.type = self.__getType()
+		self.jokers = withJokers
+		if withJokers:
+			self.type = self.__getTypeWithJokers()
+		else:
+			self.type = self.__getType()
 
 	def compareCard(self, card1, card2) -> int:
 		"""< 0: card1 less than card2
 		= 0: card1 equal to card2
 		> 0: card1 greater than card2
 		"""
-		order = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
-		return order.index(card2) - order.index(card1)
+		card1_val = Hand.CARD_STRENGHT[card1]
+		card2_val = Hand.CARD_STRENGHT[card2]
+		if self.jokers:
+			if card1 == 'J':
+				card1_val = 13
+			if card2 == 'J':
+				card2_val = 13
+		return card2_val - card1_val
 
 
 	def __gt__(self, other) -> bool:
@@ -32,6 +44,7 @@ class Hand:
 			result = self.compareCard(self.cards[i], other.cards[i])
 			if result != 0:
 				return result > 0
+		print("I shouldn't be executing xD")
 		
 
 	def __lt__(self, other) -> bool:
@@ -62,6 +75,9 @@ class Hand:
 			return Hand.Types.ONE_PAIR
 		else:
 			return Hand.Types.HIGH_CARD
+		
+	def __getTypeWithJokers():
+		return "a"
 
 class Problem:
 
