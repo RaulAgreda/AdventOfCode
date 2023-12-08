@@ -58,7 +58,7 @@ class Problem:
 if __name__ == "__main__":
 	if (len(sys.argv) not in (2, 3)):
 		print("Usage: python3 {DAY}.py 1|2 [-t]")
-		print("1: run part1\\n2: run part2\\n[-t]: run test example")
+		print("1: run part 1\\n2: run part 2\\n[-t]: run test example")
 		sys.exit(1)
 	doTest = "-t" in sys.argv
 	Problem(sys.argv[1], doTest)
