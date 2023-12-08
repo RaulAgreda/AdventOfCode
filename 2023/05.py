@@ -2,6 +2,13 @@ import sys
 from utils.read_input import read_file, read_test
 from utils.terminal_colors import Colors
 
+class Range:
+	def __init__(self, start, stop):
+		self.start:int = start
+		self.stop:int = stop
+	def __str__(self):
+		return f"[{self.start}, {self.stop}]"
+
 class Problem:
 	'''
 	@param part: 1 or 2
@@ -56,33 +63,14 @@ class Problem:
 		return minim
 
 	def part2(self):
-		locations = {}
-		print("starting")
-		# To optimize it, if we get a greater number in some of the steps, skip it by breaking the current range loop
-		# Skip all numbers that doesn't reach the minimum value
-		minim = None
+		seeds = []
 		for s in range(0, len(self.seeds), 2):
-			start = self.seeds[s]
-			end = start + self.seeds[s+1]
-			i = 0
-			while start < start+1:
-				seed = start
-				start += 1
-				if minim and start > minim:
-					break
-				nextVal = seed
-				for conversionPack in self.maps_arrays:
-					for conversion in conversionPack:
-						dest, source, step = conversion
-						# nextVal e [source, source + step]
-						if source <= nextVal and nextVal < source + step:
-							diff = nextVal - source
-							nextVal = dest + diff
-							break
-				if minim is None or nextVal < minim:
-					minim = nextVal
-				# print(nextVal)
-		return minim
+			print(len(self.seeds))
+			seeds.append(Range(self.seeds[s], self.seeds[s] + self.seeds[s+1]))
+		print(seeds)
+		for seed in seeds:
+			print(seed)
+		return None
 
 if __name__ == "__main__":
 	if (len(sys.argv) not in (2, 3)):
