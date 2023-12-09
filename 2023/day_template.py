@@ -20,6 +20,7 @@ if __name__ == "__main__":
 	template = f"""import sys
 from utils.read_input import read_file, read_test
 from utils.terminal_colors import Colors
+from typing import *
 
 class Problem:
 	'''
