@@ -1,0 +1,9 @@
+INPUT:
+..F7.
+.FJ|.
+SJ.L7
+|F--J
+LJ...
+SOLUTION:
+8
+<solution_part2>
