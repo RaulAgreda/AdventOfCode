@@ -1,13 +1,54 @@
 import sys
 from utils.read_input import read_file, read_test
 from utils.terminal_colors import Colors
+from typing import *
 
 class Range:
-	def __init__(self, start, stop):
+	def __init__(self, start:int , length: int):
 		self.start:int = start
-		self.stop:int = stop
+		self.length:int = length
+		self.stop:int = start + length - 1
+		if self.length == 0:
+			print("[ERROR] RANGE SHOULD NOT HAVE LENGTH 0")
+
 	def __str__(self):
 		return f"[{self.start}, {self.stop}]"
+
+class RangeMap:
+	def __init__(self, dest:int|None, src:int|None, step:int):
+		self.dest=Range(dest, step) if dest is not None else None
+		self.src=Range(src, step) if src is not None else None
+		self.step = step
+		
+	def __gt__(self, other: 'RangeMap'):
+		return self.dest.start < other.src.start
+
+	def splitInRanges(self, inputRange:Range) -> List[Range]:
+		"""Compares the input range with the dest range, and splits the input range in order to fit the dest"""
+		dest = self.dest
+		if inputRange.stop < dest.start or dest.stop < inputRange.start:
+			return None
+		if inputRange.start >= dest.start and inputRange.stop <= dest.stop:
+			return [inputRange]
+		ranges:List[Range] = []
+		if inputRange.start < dest.start:
+			ranges.append(Range(inputRange.start, dest.start - inputRange.start))
+			ranges.append(Range(dest.start, inputRange.length - ranges[-1].length))
+		if inputRange.stop > dest.stop:
+			if len(ranges) == 0:
+				ranges.append(Range(inputRange.start, dest.stop - inputRange.start + 1))
+			else:
+				ranges[-1] = Range(ranges[-1].start, dest.stop - ranges[-1].start + 1)
+			ranges.append(Range(dest.stop+1, inputRange.stop - dest.stop))
+		return ranges
+
+
+	def convertRange(self, other:Range) -> Range:
+		"""[other] => [self.dest] => [self.src]"""
+		diff = other.start - self.dest.start
+		return Range(self.src.start + diff, other.length)
+		
+		
 
 class Problem:
 	'''
@@ -62,16 +103,50 @@ class Problem:
 				minim = nextVal
 		return minim
 
+	def checkRange(self, range: Range, maps: List[RangeMap], startOffset: int):
+		for m in maps:
+			spl = m.splitInRanges(range)
+			if spl is None:
+				continue
+			for s in spl:
+				offset = s.start - range.start
+				conversion = m.convertRange(s)
+				self.checkRange(conversion, maps, offset)
+
+
 	def part2(self):
 		seeds = []
 		for s in range(0, len(self.seeds), 2):
-			print(len(self.seeds))
-			seeds.append(Range(self.seeds[s], self.seeds[s] + self.seeds[s+1]))
-		print(seeds)
+			seeds.append(Range(self.seeds[s], self.seeds[s+1]))
 		for seed in seeds:
 			print(seed)
+		for conversionPack in self.maps_arrays:
+			for c in range(len(conversionPack)):
+				conversionPack[c] = RangeMap(*conversionPack[c])
+			conversionPack.sort()
+		print("============")
+		for m in self.maps_arrays[-1]:
+			print(m.dest, m.src, m.step)
+
 		return None
 
+	def test_ranges():
+		test1 = Range(2, 7) # [2, 8]
+		splitTest = []
+		splitTest.append(RangeMap(0, 0, 11)) # [0, 10]
+		splitTest.append(RangeMap(0, 0, 7))# [0, 6]
+		splitTest.append(RangeMap(4, 0, 7))# [4, 10]
+		splitTest.append(RangeMap(4, 0, 3))# [4, 6]
+		splitTest.append(RangeMap(10, 0, 12))
+		splitTest.append(RangeMap(1, 0, 2))
+		def testCase(inputRange: Range, splitTest:RangeMap):
+			print(f"Fit {inputRange} in {splitTest.dest}")
+			result = splitTest.splitInRanges(inputRange)
+			for r in result:
+				print(r)
+			print("=====")
+		for test in splitTest:
+			testCase(test1, test)
 if __name__ == "__main__":
 	if (len(sys.argv) not in (2, 3)):
 		print("Usage: python3 05.py 1|2 [-t]")
