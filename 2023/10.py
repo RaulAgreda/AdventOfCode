@@ -16,13 +16,13 @@ compatibilities = {
 }
 
 directions = ('n', 's', 'w', 'e')
+directionsCoord = ((-1, 0), (1, 0), (0, -1), (0, 1))
 counterDir = {
 	'n': 's',
 	's': 'n',
 	'w': 'e',
 	'e': 'w'
 }
-directionsCoord = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
 class Problem:
 	'''
@@ -39,10 +39,7 @@ class Problem:
 		self.matrix = []
 		for line in self.inp:
 			self.matrix.append(line)
-		self.connections = {
-			"|": ['|', 'L']
-		}
-		
+
 		result = self.part1() if part == '1' else self.part2()
 		if not test:
 			print(result)
@@ -58,7 +55,7 @@ class Problem:
 			print(f"{Colors.YELLOW}Expected: {Colors.RESET}{solution}")
 			print(f"{Colors.YELLOW}Got: {Colors.RESET}{result}")
 	
-	def connectedTo(self, current, other:Literal['|', '-', 'L', 'J', '7', 'F'], otherPos:Literal['w', 'e', 'n', 's']):
+	def connectedTo(self, current, other:Literal['|', '-', 'L', 'J', '7', 'F'], otherPos:Literal['w', 'e', 'n', 's']) -> bool:
 		"""@param: otherPos, position from this pipe"""
 		if otherPos == 'n':
 			return 'n' in compatibilities[current] and 's' in compatibilities[other]
@@ -211,6 +208,7 @@ class Problem:
 		for l in visualMatrix:
 			for c in l:
 				if c == 'X':
+					# Paint X in green
 					print("\033[92mX\033[0m", end='')
 				else:
 					print(c, end='')
