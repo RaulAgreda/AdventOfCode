@@ -75,8 +75,8 @@ class Problem:
 		return stars
 		# now we check the space between galaxies and add them
 	
-	def part1(self):
-		stars = self.getStars()
+	def part1(self, expansion=1):
+		stars = self.getStars(expansion)
 		total = 0
 		for s1 in range(len(stars)-1):
 			for s2 in range(s1+1, len(stars)):
@@ -84,12 +84,7 @@ class Problem:
 		return total
 	
 	def part2(self):
-		stars = self.getStars(999999)
-		total = 0
-		for s1 in range(len(stars)-1):
-			for s2 in range(s1+1, len(stars)):
-					total += stars[s1].distance(stars[s2])
-		return total
+		return self.part1(999999)
 
 
 if __name__ == "__main__":
