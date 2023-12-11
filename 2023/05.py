@@ -4,12 +4,19 @@ from utils.terminal_colors import Colors
 from typing import *
 
 class Range:
-	def __init__(self, start:int , length: int):
+	def __init__(self, start:int , length:int = None, stop:int = None):
 		self.start:int = start
-		self.length:int = length
-		self.stop:int = start + length - 1
+		if stop is None:
+			self.length:int = length
+			self.stop:int = start + length - 1
+		else:
+			self.length = stop - start + 1
+			self.stop = stop
 		if self.length == 0:
 			print("[ERROR] RANGE SHOULD NOT HAVE LENGTH 0")
+
+	def __contains__(self, n: int):
+		return self.start <= n <= self.stop
 
 	def __str__(self):
 		return f"[{self.start}, {self.stop}]"
@@ -21,32 +28,31 @@ class RangeMap:
 		self.step = step
 		
 	def __gt__(self, other: 'RangeMap'):
-		return self.dest.start < other.src.start
+		return self.dest.start > other.dest.start
 
-	def splitInRanges(self, inputRange:Range) -> List[Range]:
-		"""Compares the input range with the dest range, and splits the input range in order to fit the dest"""
-		dest = self.dest
-		if inputRange.stop < dest.start or dest.stop < inputRange.start:
-			return None
-		if inputRange.start >= dest.start and inputRange.stop <= dest.stop:
-			return [inputRange]
-		ranges:List[Range] = []
-		if inputRange.start < dest.start:
-			ranges.append(Range(inputRange.start, dest.start - inputRange.start))
-			ranges.append(Range(dest.start, inputRange.length - ranges[-1].length))
-		if inputRange.stop > dest.stop:
-			if len(ranges) == 0:
-				ranges.append(Range(inputRange.start, dest.stop - inputRange.start + 1))
+	def fitRange(self, r:Range) -> Range:
+		"""Searchs in this map, if it is not included at all, returns r\n
+			if it is partially included:
+			- if r.start is in range, returns [r.start + src, length] were length is the number of numbers included in dest
+			- else, returns [r.start, r.dest]
+		"""
+		if r.start > self.dest.stop or r.stop < self.dest.start:
+			return r
+		if r.start in self.dest:
+			if r.stop <= self.dest.stop:
+				return r
 			else:
-				ranges[-1] = Range(ranges[-1].start, dest.stop - ranges[-1].start + 1)
-			ranges.append(Range(dest.stop+1, inputRange.stop - dest.stop))
-		return ranges
-
-
-	def convertRange(self, other:Range) -> Range:
+				return Range(r.start, stop=self.dest.stop)
+		else:
+			return Range(r.start, stop=self.dest.start - 1)
+		
+	def convertRange(self, r:Range) -> Range:
 		"""[other] => [self.dest] => [self.src]"""
-		diff = other.start - self.dest.start
-		return Range(self.src.start + diff, other.length)
+		if r.start in self.dest:
+			diff = r.start - self.dest.start
+			return Range(self.src.start + diff, r.length)
+		else:
+			return r
 		
 		
 
@@ -103,37 +109,69 @@ class Problem:
 				minim = nextVal
 		return minim
 
-	def checkRange(self, range: Range, maps: List[RangeMap], startOffset: int):
-		for m in maps:
-			spl = m.splitInRanges(range)
-			if spl is None:
-				continue
-			for s in spl:
-				offset = s.start - range.start
-				conversion = m.convertRange(s)
-				self.checkRange(conversion, maps, offset)
+	def inSeeds(self, r: Range, seeds:List[Range]):
+		for sR in seeds:
+			# If the ranges collide, return the lowest value
+			if r.start <= sR.stop and r.stop >= sR.start:
+				if r.start <= sR.start:
+					return sR.start
+				else:
+					return r.start
+		return None
+	
+	def getLowest(self, checkRange:Range, c:int, allMaps:List[RangeMap], seeds):
+		if c == len(allMaps):
+			lowest = self.inSeeds(checkRange, seeds)
+			if lowest is None:
+				return None, checkRange.length
+			else:
+				offset = lowest - checkRange.start
+				return offset, checkRange.length
+
+		for m in allMaps[c]:
+			print("=======Checking======")
+			print(m.dest, m.src, m.step)
+			nextCheck = checkRange
+			while True:
+				fit = m.fitRange(nextCheck)
+				print(nextCheck,"fit in", fit)
+				conversion = m.convertRange(fit)
+				print("\t converted in:", conversion)
+				result = self.getLowest(conversion, c+1, allMaps, seeds)
+				if result[0] is not None:
+					return fit.start - checkRange.start + result[0], result[1]
+				if fit.stop == checkRange.stop:
+					break
+				nextCheck = Range(fit.stop + 1, stop=checkRange.stop)
+		return None, None
 
 
 	def part2(self):
 		seeds = []
 		for s in range(0, len(self.seeds), 2):
 			seeds.append(Range(self.seeds[s], self.seeds[s+1]))
-		for seed in seeds:
-			print(seed)
 		for conversionPack in self.maps_arrays:
 			for c in range(len(conversionPack)):
 				conversionPack[c] = RangeMap(*conversionPack[c])
 			conversionPack.sort()
-		print("============")
-		for m in self.maps_arrays[-1]:
-			print(m.dest, m.src, m.step)
+		self.maps_arrays.reverse()
+		for ms in self.maps_arrays:
+			for m in ms:
+				print(m.dest, m.src)
+			print("=======")
+		# for m in self.maps_arrays[-1]:
+		# 	print(m.dest.start, m.src.start, m.step)
+		startRange = Range(0, stop=self.maps_arrays[0][-1].dest.stop)
+		return self.getLowest(startRange, 0, self.maps_arrays, seeds)
+		print(startRange)
 
 		return None
 
-	def test_ranges():
-		test1 = Range(2, 7) # [2, 8]
+	def test_ranges(self):
+		test1 = Range(3, 7) # [2, 8]
 		splitTest = []
 		splitTest.append(RangeMap(0, 0, 11)) # [0, 10]
+		splitTest.append(RangeMap(1, 0, 3)) # [0, 10]
 		splitTest.append(RangeMap(0, 0, 7))# [0, 6]
 		splitTest.append(RangeMap(4, 0, 7))# [4, 10]
 		splitTest.append(RangeMap(4, 0, 3))# [4, 6]
@@ -141,9 +179,8 @@ class Problem:
 		splitTest.append(RangeMap(1, 0, 2))
 		def testCase(inputRange: Range, splitTest:RangeMap):
 			print(f"Fit {inputRange} in {splitTest.dest}")
-			result = splitTest.splitInRanges(inputRange)
-			for r in result:
-				print(r)
+			result = splitTest.fitRange(test1)
+			print(result)
 			print("=====")
 		for test in splitTest:
 			testCase(test1, test)
