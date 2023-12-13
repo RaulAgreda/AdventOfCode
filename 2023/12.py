@@ -32,12 +32,12 @@ class Problem:
 			print(f"{Colors.YELLOW}Got: {Colors.RESET}{result}")
 	
 	def checkPatern(self, pattern:str, numbers:List[int]):
-		if (self.countGroups(pattern) != len(numbers)):
-			return False
 		groupCount = 0
 		groupIdx = 0
 		inGroup = pattern[0] == '#'
 		for c in pattern:
+			if groupIdx > len(numbers)-1:
+				break
 			if c == '.':
 				if inGroup:
 					if groupCount != numbers[groupIdx]:
@@ -50,10 +50,8 @@ class Problem:
 				groupCount+=1
 			elif c == '?':
 				break
-		if inGroup:
-			if groupCount != numbers[groupIdx]:
-				return False
-			groupIdx += 1
+		if inGroup and groupIdx <= len(numbers)-1 and groupCount != numbers[groupIdx]:
+			return False
 		return True
 
 	def countGroups(self, pattern):
@@ -71,10 +69,12 @@ class Problem:
 		return count
 
 	def getCombinations(self, pattern:str, numbers:List[int]):
-		if '?' not in pattern:
-			return int(self.checkPatern(pattern, numbers))
 		if self.countGroups(pattern) > len(numbers):
 			return 0
+		if not self.checkPatern(pattern, numbers):
+			return 0
+		if '?' not in pattern:
+			return 1
 		p1 = self.getCombinations(pattern.replace('?', '#', 1), numbers)
 		p2 = self.getCombinations(pattern.replace('?', '.', 1), numbers)
 		return p1 + p2
@@ -95,6 +95,7 @@ class Problem:
 		print(self.countGroups("..#...####.####.###."))
 		print(self.countGroups("..#......."))
 		print(self.countGroups("........"))
+		print(self.checkPatern("...###...##....#..#...?", [3,2,1]))
 		pass
 
 if __name__ == "__main__":
