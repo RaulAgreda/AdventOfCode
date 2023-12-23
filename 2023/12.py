@@ -2,6 +2,7 @@ import sys
 from utils.read_input import read_file, read_test
 from utils.terminal_colors import Colors
 from typing import *
+# sys.setrecursionlimit(1000000)
 
 class Problem:
 	'''
@@ -32,27 +33,28 @@ class Problem:
 			print(f"{Colors.YELLOW}Got: {Colors.RESET}{result}")
 	
 	def checkPatern(self, pattern:str, numbers:List[int]):
-		groupCount = 0
-		groupIdx = 0
-		inGroup = pattern[0] == '#'
-		for c in pattern:
-			if groupIdx > len(numbers)-1:
-				break
-			if c == '.':
-				if inGroup:
-					if groupCount != numbers[groupIdx]:
+		numbers_index: int = 0
+		g_count: int = 0
+		in_group: bool = False
+		c: int = 0
+		while c < len(pattern):
+			if pattern[c] == '.':
+				if in_group:
+					if g_count != numbers[numbers_index]:
 						return False
-					groupIdx += 1
-				groupCount = 0
-				inGroup = False
-			elif c == '#':
-				inGroup = True
-				groupCount+=1
-			elif c == '?':
-				break
-		if inGroup and groupIdx <= len(numbers)-1 and groupCount != numbers[groupIdx]:
-			return False
-		return True
+					numbers_index += 1
+				g_count = 0
+				in_group = False
+			elif pattern[c] == '#':
+				g_count += 1
+				in_group = True
+			else: # == ?
+				return True
+			if in_group:
+				if g_count > numbers[numbers_index]:
+					return False
+			c+=1
+		return int((not in_group) or in_group and g_count == numbers[numbers_index])
 
 	def countGroups(self, pattern):
 		count = 0
@@ -69,17 +71,17 @@ class Problem:
 		return count
 
 	def getCombinations(self, pattern:str, numbers:List[int]):
-		if self.countGroups(pattern) > len(numbers):
+		n_groups = self.countGroups(pattern)
+		if n_groups > len(numbers):
 			return 0
 		if not self.checkPatern(pattern, numbers):
 			return 0
 		if '?' not in pattern:
-			return 1
+			return int(n_groups == len(numbers))
 		p1 = self.getCombinations(pattern.replace('?', '#', 1), numbers)
 		p2 = self.getCombinations(pattern.replace('?', '.', 1), numbers)
 		return p1 + p2
 		
-
 	def part1(self):
 		total = 0
 		for line in self.inp:
@@ -90,13 +92,17 @@ class Problem:
 
 
 	def part2(self):
-		print(self.countGroups("#...####.####"))
-		print(self.countGroups("#...####.####.###."))
-		print(self.countGroups("..#...####.####.###."))
-		print(self.countGroups("..#......."))
-		print(self.countGroups("........"))
-		print(self.checkPatern("...###...##....#..#...?", [3,2,1]))
-		pass
+		total = 0
+		for line in self.inp:
+			pattern, numbers = line.split()
+			numbers = [int(x) for x in numbers.split(',')]
+			original = pattern
+			for _ in range(4):
+				pattern += '?'
+				pattern += original
+			print(pattern)
+			total += self.getCombinations(pattern, numbers)
+		return total
 
 if __name__ == "__main__":
 	if (len(sys.argv) not in (2, 3)):
