@@ -15,6 +15,6 @@
 Credits of this ascii drawing to [@Diego100451091](https://github.com/Diego100451091)
 
 ```
-Progress: 11/25
-🟩🟩🟩🟩🟨🟩🟩🟩🟩🟩🟩⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
+Progress: 1/25
+🟩⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
 ```
