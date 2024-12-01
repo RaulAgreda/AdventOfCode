@@ -1,0 +1,21 @@
+from typing import *
+from problem import Problem
+
+class Day[day](Problem):
+    def __init__(self, input: str, part: str):
+        # Call the parent class constructor to initialize input and part
+        super().__init__(input, part)
+    
+    def part1(self):
+        """
+        Implement the logic for part 1 of the problem.
+        """
+        # Add your solution for part 1 here
+        return
+
+    def part2(self):
+        """
+        Implement the logic for part 2 of the problem.
+        """
+        # Add your solution for part 2 here
+        return

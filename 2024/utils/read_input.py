@@ -5,13 +5,13 @@ class ReadState:
 	READING_INPUT='reading_input'
 	READING_SOLUTION='reading_solution'	
 
-def read_file(input_file):
+def read_input(input_file):
 	with open(input_file, 'r') as f:
 		return f.read()
 	
 def read_test(input_file):
 	input_string = ''
-	solutions = []
+	solution = ''
 	with open(input_file, 'r') as f:
 		state = ReadState.STARTING
 		text = f.read().split('\n')
@@ -28,11 +28,8 @@ def read_test(input_file):
 					continue
 				input_string += line + '\n'
 			elif state == ReadState.READING_SOLUTION:
-				solutions.append(line)
-		if state != ReadState.READING_SOLUTION or len(solutions) != 2:
-			return log_error()
-		
-	return input_string[:-1], solutions
+				solution = line
+	return input_string[:-1], solution
 
 def log_error():
 	print(Colors.RED+"[ERROR] "+Colors.RESET+"Wrong test input file format")
@@ -40,6 +37,5 @@ def log_error():
 	INPUT:
 	[input text]
 	SOLUTION
-	[solution part 1]
-	[solution part 2]""")
+	[solution text]""")
 	return None
