@@ -1,6 +1,6 @@
 from utils.terminal_colors import Colors
 from utils.read_input import read_input, read_test
-from problem.problem import Problem
+from template.problem import Problem
 import importlib
 import sys, os
 from typing import *
@@ -47,9 +47,7 @@ class Main:
                 content = f.read()
                 input_text, expected_solution = content.split("SOLUTION:\n")
                 input_text = input_text.replace("INPUT:\n", "")[:-1]
-                expected_solution = expected_solution.replace("\n", "")
-                expected_solution = expected_solution.replace("\r", "")
-                expected_solution = expected_solution.strip()
+                expected_solution = expected_solution.replace("\n", "").replace("\r", "").strip()
                 result = str(self.solve_problem(input_text, self.part))
                 self.do_unit_test(result, expected_solution, test_file.split(".")[0])
 

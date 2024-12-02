@@ -48,7 +48,7 @@ if __name__ == "__main__":
 		sys.exit(1)
 	DAY = sys.argv[1].zfill(2)
 
-	with open("problem/template.txt", "r") as f:
+	with open("template/template.txt", "r") as f:
 		template = f.read()
 		template = template.replace("[day]", DAY)
 

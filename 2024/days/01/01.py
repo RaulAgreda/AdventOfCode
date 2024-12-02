@@ -1,5 +1,5 @@
 from typing import *
-from problem.problem import Problem
+from template.problem import Problem
 
 class Day01(Problem):
     def __init__(self, input: str, part: str):
