@@ -4,9 +4,6 @@ from utils.terminal_colors import Colors
 from dotenv import load_dotenv
 import requests
 
-load_dotenv()
-input_cookie = os.getenv("AOC_COOKIE")
-
 def create_file(inputFile, content):
 	if not os.path.exists(inputFile):
 		os.makedirs(os.path.dirname(inputFile), exist_ok=True)
@@ -39,6 +36,12 @@ def download_input():
 		exit(1)
 
 if __name__ == "__main__":
+
+	load_dotenv()
+	input_cookie = os.getenv("AOC_COOKIE")
+	if not input_cookie:
+		print("No cookie found in .env file")
+		sys.exit(1)
 
 	if len(sys.argv) != 2:
 		print("Usage: python3 day_template.py [DAY]")
