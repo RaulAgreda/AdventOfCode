@@ -14,6 +14,7 @@ def create_file(inputFile, content):
 			f.write(content)
 	else:
 		print(Colors.RED+"[ERROR]"+Colors.RESET, inputFile, "already exists!!")
+		exit(1)
 
 def download_problem():
 	# Download and generate url file
@@ -25,6 +26,7 @@ def download_problem():
 
 	except requests.exceptions.RequestException as e:
 		print(Colors.RED+"[ERROR]"+Colors.RESET, "Failed to download problem:", e)
+		exit(1)
 
 
 def download_input():
@@ -34,6 +36,7 @@ def download_input():
 		create_file(f"days/{DAY}/input.txt", inp.text[:-1])
 	except requests.exceptions.RequestException as e:
 		print(Colors.RED+"[ERROR]"+Colors.RESET, "Failed to download input:", e)
+		exit(1)
 
 if __name__ == "__main__":
 

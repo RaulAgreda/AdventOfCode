@@ -6,7 +6,7 @@ class Problem:
 	@param part: 1 or 2
 	'''
 	def __init__(self, input: str, part:str):
-		self.inp = input.split("\n")
+		self.input = input.split("\n")
 		self.solution = self.part1() if part == '1' else self.part2()
 		
 	def part1(self):

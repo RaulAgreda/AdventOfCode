@@ -1,5 +1,5 @@
 from typing import *
-from problem import Problem
+from problem.problem import Problem
 
 class Day[day](Problem):
     def __init__(self, input: str, part: str):
