@@ -26,7 +26,7 @@ class Day05(Problem):
         total = 0
         for manual in self.second_section:
             numbers = [int(x) for x in manual.split(",")]
-            if self.checkUpdate(numbers):
+            if self.checkUpdate(numbers) == -1:
                 # If the manual is valid, add the middle number to the result
                 total += numbers[len(numbers) // 2]
         # Add your solution for part 1 here
@@ -37,15 +37,31 @@ class Day05(Problem):
         Implement the logic for part 2 of the problem.
         """
         total = 0
+        for manual in self.second_section:
+            numbers = [int(x) for x in manual.split(",")]
+            if self.handleIncorrectUpdate(numbers):
+                total += numbers[len(numbers) // 2]
         return total
+    
+    def handleIncorrectUpdate(self, numbers: list):
+        wrongIdx = self.checkUpdate(numbers)
+        if wrongIdx == -1:
+            return False
+        while wrongIdx != -1:
+            v = numbers.pop(wrongIdx)
+            numbers.insert(wrongIdx-1,v)
+            wrongIdx = self.checkUpdate(numbers)
+        return True
 
     def checkUpdate(self, update):
+        # Returns the not valid number index or -1 if correct
         visited = set()
-        for n in update:
+        for i in range(len(update)):
+            n = update[i]
             if n in self.rules:
                 for v in self.rules[n]:
                     if v in visited:
                         # Is not valid
-                        return False
+                        return i
             visited.add(n)
-        return True
+        return -1
