@@ -1,0 +1,5 @@
+INPUT:
+<input_text>
+SOLUTION:
+<solution_part1>
+<solution_part2>
