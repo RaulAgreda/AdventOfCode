@@ -144,10 +144,10 @@ class Day09(Problem):
         # print(self.getDecodedPartitions(partitions))
         processedPartition = partitions.tail
         processedId = processedPartition.id
-       
+        
         while processedId > 0:
             # Procesamos el actual
-            print(processedId)
+            # print(processedId)
             replaceNode = partitions.head
             while replaceNode.idx < processedPartition.idx:
                 if replaceNode.id is not None or processedPartition.n > replaceNode.n:
@@ -165,11 +165,11 @@ class Day09(Problem):
             processedPartition = partitions.getPartitionIdFromNode(processedPartition, processedId)
             # print(processedPartition.id)
         
-        translation = self.getDecodedPartitions(partitions)
-        i = 0
         total = 0
-        # print(partitions)
-        for i in range(len(translation)):
-            total += i * int(translation[i]) if translation[i] != '.' else 0
-            i+=1
+        idx = 0
+        for p in partitions:
+            for _ in range(p.n):
+                if p.id is not None:
+                    total += p.id * idx
+                idx += 1
         return total
