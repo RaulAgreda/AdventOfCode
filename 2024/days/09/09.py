@@ -141,13 +141,12 @@ class Day09(Problem):
             idx += n
             if b % 2 == 0:
                 id+=1
-        # print(self.getDecodedPartitions(partitions))
+
         processedPartition = partitions.tail
         processedId = processedPartition.id
         
         while processedId > 0:
             # Procesamos el actual
-            # print(processedId)
             replaceNode = partitions.head
             while replaceNode.idx < processedPartition.idx:
                 if replaceNode.id is not None or processedPartition.n > replaceNode.n:
@@ -163,7 +162,6 @@ class Day09(Problem):
                 break                
             processedId -= 1
             processedPartition = partitions.getPartitionIdFromNode(processedPartition, processedId)
-            # print(processedPartition.id)
         
         total = 0
         idx = 0
