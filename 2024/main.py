@@ -42,6 +42,7 @@ class Main:
     def run_tests(self):
         # Read every test file of the TestInputs/Part_{part} folder
         test_files = os.listdir(f"days/{self.day}/TestInputs/Part_{self.part}")
+        test_files.sort()
         for test_file in test_files:
             with open(f"days/{self.day}/TestInputs/Part_{self.part}/{test_file}", "r") as f:
                 content = f.read()
