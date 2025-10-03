@@ -9,4 +9,4 @@ INPUT:
 
 <vv<<^^<<^^
 SOLUTION:
-105
+618

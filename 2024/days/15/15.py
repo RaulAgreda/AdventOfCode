@@ -26,10 +26,12 @@ class Day15(Problem):
             self.map[i][j], self.map[i+dir[0]][j+dir[1]] = self.map[i+dir[0]][j+dir[1]], self.map[i][j]
             return True
 
-    def printMap(self, map):
+    def printMap(self, map, move = None):
+        # Clear screen and move cursor to top-left
+        print('\033[2J\033[H', end='')
+        print(move if move is not None else '')
         for line in map:
             print(''.join(line))
-        print()
 
     def part1(self):
         dirs = {
@@ -86,41 +88,79 @@ class Day15(Problem):
         return newMap
     
     def moveObstacleHorizontal(self, i, j, dir, map):
-        if map[i+dir[0]][j+dir[1]] == '.':
-            map[i][j], map[i+dir[0]][j+dir[1]] = map[i+dir[0]][j+dir[1]], map[i][j]
+        if map[i][j+dir[1]] == '.':
+            map[i][j], map[i][j+dir[1]] = map[i][j+dir[1]], map[i][j]
             return True
-        if map[i+dir[0]][j+dir[1]] == '#':
+        if map[i][j+dir[1]] == '#':
             return False
-        if self.moveObstacleHorizontal(i+dir[0], j+dir[1], dir, map):
-            map[i][j], map[i+dir[0]][j+dir[1]] = map[i+dir[0]][j+dir[1]], map[i][j]
+        if self.moveObstacleHorizontal(i, j+dir[1], dir, map):
+            map[i][j], map[i][j+dir[1]] = map[i][j+dir[1]], map[i][j]
             return True
-
+        
+    def checkVerticalMove(self, i, j, dir, map):
+        couple = 1 if map[i][j] == '[' else -1
+        # If next is blocked return False
+        if map[i+dir[0]][j] == '#' or map[i+dir[0]][j+couple] == '#':
+            return False
+        # If next is completely clear move and return True
+        if map[i+dir[0]][j] == '.' and map[i+dir[0]][j+couple] == '.':
+            return True
+        
+        if map[i+dir[0]][j] == '.':
+            # Move the box situated on the couple
+            return self.checkVerticalMove(i+dir[0], j+couple, dir, map)
+        elif map[i][j] == map[i+dir[0]][j]:
+            # One box completely on top
+            return self.checkVerticalMove(i+dir[0], j, dir, map)
+        else:
+            if map[i+dir[0]][j+couple] == '.':
+                # Only one box on top
+                return self.checkVerticalMove(i+dir[0], j, dir, map)
+            else:
+                # Two boxes on top
+                return self.checkVerticalMove(i+dir[0], j, dir, map) and self.checkVerticalMove(i+dir[0], j+couple, dir, map)
+        
+        print("I shouldn't be here")
+        
     def moveObstacleVertical(self, i, j, dir, map):
-        if map[i+dir[0]][j+dir[1]] == '.':
-            if map[i][j] == '[' and map[i+dir[0]][j+dir[1]+1] == '#':
-                return False
-            if map[i][j] == ']' and map[i+dir[0]][j+dir[1]-1] == '#':
-                return False
-            # Move the box
-            map[i][j], map[i+dir[0]][j+dir[1]] = map[i+dir[0]][j+dir[1]], map[i][j]
-            if map[i][j] == '[':
-                map[i][j], map[i+dir[0]][j+dir[1]+1] = map[i+dir[0]][j+dir[1]+1], map[i][j]
-            elif map[i][j] == ']':
-                map[i][j], map[i+dir[0]][j+dir[1]-1] = map[i+dir[0]][j+dir[1]-1], map[i][j]
-            return True
-        if map[i+dir[0]][j+dir[1]] == '#':
+        couple = 1 if map[i][j] == '[' else -1
+        # If next is blocked return False
+        if map[i+dir[0]][j] == '#' or map[i+dir[0]][j+couple] == '#':
+            print("I shouldn't execute :v")
             return False
-        if self.moveObstacleVertical(i+dir[0], j+dir[1], dir, map):
-            map[i][j], map[i+dir[0]][j+dir[1]] = map[i+dir[0]][j+dir[1]], map[i][j]
-            if map[i][j] == '[':
-                map[i][j], map[i+dir[0]][j+dir[1]+1] = map[i+dir[0]][j+dir[1]+1], map[i][j]
-            elif map[i][j] == ']':
-                map[i][j], map[i+dir[0]][j+dir[1]-1] = map[i+dir[0]][j+dir[1]-1], map[i][j]
-            return True
+        # If next is completely clear move directly
+        if map[i+dir[0]][j] == '.' and map[i+dir[0]][j+couple] == '.':
+            map[i][j], map[i+dir[0]][j] = map[i+dir[0]][j], map[i][j]
+            map[i][j+couple], map[i+dir[0]][j+couple] = map[i+dir[0]][j+couple], map[i][j+couple]
+            return
+        
+        if map[i+dir[0]][j] == '.':
+            # Move the box situated on top of the next
+            self.moveObstacleVertical(i+dir[0], j+couple, dir, map)
+            map[i][j], map[i+dir[0]][j] = map[i+dir[0]][j], map[i][j]
+            map[i][j+couple], map[i+dir[0]][j+couple] = map[i+dir[0]][j+couple], map[i][j+couple]
+            return
+        elif map[i][j] == map[i+dir[0]][j]:
+            # One box completely on top
+            self.moveObstacleVertical(i+dir[0], j, dir, map)
+            map[i][j], map[i+dir[0]][j] = map[i+dir[0]][j], map[i][j]
+            map[i][j+couple], map[i+dir[0]][j+couple] = map[i+dir[0]][j+couple], map[i][j+couple]
+            return
+        else:
+            # At least one box on top
+            self.moveObstacleVertical(i+dir[0], j, dir, map)
+            # Two boxes on top
+            if map[i+dir[0]][j+couple] != '.':
+                self.moveObstacleVertical(i+dir[0], j+couple, dir, map)
+
+            map[i][j], map[i+dir[0]][j] = map[i+dir[0]][j], map[i][j]
+            map[i][j+couple], map[i+dir[0]][j+couple] = map[i+dir[0]][j+couple], map[i][j+couple]
+            return
+        
+        print("Shouldn't be here xd")
 
     def part2(self):
-        newMap = self.getNewMap()
-        self.printMap(newMap)       
+        newMap = self.getNewMap()  
         
         dirs = {
             "^": (-1, 0),
@@ -149,7 +189,8 @@ class Day15(Problem):
                     if self.moveObstacleHorizontal(robot[0], robot[1], dir, newMap):
                         moveRobot = True
                 else:
-                    if self.moveObstacleVertical(nextPos[0], nextPos[1], dir, newMap):
+                    if self.checkVerticalMove(nextPos[0], nextPos[1], dir, newMap):
+                        self.moveObstacleVertical(nextPos[0], nextPos[1], dir, newMap)
                         moveRobot = True
                 
                 if moveRobot:
@@ -157,6 +198,15 @@ class Day15(Problem):
                     newMap[nextPos[0]][nextPos[1]] = '@'
                     robot[0] = nextPos[0]
                     robot[1] = nextPos[1]
-            self.printMap(newMap)       
+            # self.printMap(newMap, move)       
+            # time.sleep(0.01)
 
-        return
+        total = 0
+        for i in range(len(newMap)):
+            for j in range(len(newMap[0])):
+                if newMap[i][j] == '[':
+                    vDist = i
+                    hDist = j
+                    total += 100 * vDist + hDist
+
+        return total
