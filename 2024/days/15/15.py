@@ -120,14 +120,8 @@ class Day15(Problem):
                 # Two boxes on top
                 return self.checkVerticalMove(i+dir[0], j, dir, map) and self.checkVerticalMove(i+dir[0], j+couple, dir, map)
         
-        print("I shouldn't be here")
-        
     def moveObstacleVertical(self, i, j, dir, map):
         couple = 1 if map[i][j] == '[' else -1
-        # If next is blocked return False
-        if map[i+dir[0]][j] == '#' or map[i+dir[0]][j+couple] == '#':
-            print("I shouldn't execute :v")
-            return False
         # If next is completely clear move directly
         if map[i+dir[0]][j] == '.' and map[i+dir[0]][j+couple] == '.':
             map[i][j], map[i+dir[0]][j] = map[i+dir[0]][j], map[i][j]
@@ -156,8 +150,6 @@ class Day15(Problem):
             map[i][j], map[i+dir[0]][j] = map[i+dir[0]][j], map[i][j]
             map[i][j+couple], map[i+dir[0]][j+couple] = map[i+dir[0]][j+couple], map[i][j+couple]
             return
-        
-        print("Shouldn't be here xd")
 
     def part2(self):
         newMap = self.getNewMap()  
